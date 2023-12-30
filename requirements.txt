@@ -3,3 +3,5 @@ scikit-learn
 numpy
 matplotlib
 seaborn
+scikit-fda
+statsmodels

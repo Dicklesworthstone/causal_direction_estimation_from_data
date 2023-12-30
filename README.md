@@ -17,51 +17,57 @@ To illustrate, consider a dataset with altitude and temperature measurements. Wi
    - If a model's error distribution appears more 'random' or 'noise-like,' it likely represents the correct causal direction. Conversely, systematic errors in the other model indicate an inaccurate causal assumption.
 
 3. **Advanced Error Distribution Analysis:**
-   - We implement a sophisticated technique to quantify error distribution 'regularity.' This involves assessing deviations from a hyper-ellipsoid shape, which would symbolize a normal distribution. Distinctly shaped distributions may indicate structural model issues, potentially caused by misjudged causality.
+   - Our approach extends beyond traditional methods by employing a sophisticated scoring system to analyze the regularity and characteristics of error distributions from various machine learning models. This system includes:
+     - **Statistical Tests**: We apply the Shapiro-Wilk test to assess normality, along with skewness and kurtosis tests to understand the shape of the error distributions. These tests help determine if the errors behave like random noise or exhibit systematic patterns.
+     - **Functional Data Analysis (FDA)**: FDA is used to transform the error distributions into a functional data form. We then analyze the variance and depth of these distributions. A significant difference in the variance or depth between two sets of errors suggests a potential causal direction.
+     - **Distribution Fitting and AIC Scoring**: We fit different statistical distributions to the errors and use the Akaike Information Criterion (AIC) for model selection. This step aims to identify which error distribution aligns more closely with a theoretical distribution, indicating a better model fit and thus a more likely causal direction.
+   - The scoring system assigns weights to the results of these tests and analyses. The total scores for each possible causal direction are compared, with a higher score indicating a more likely causal relationship. This comprehensive analysis helps in inferring the most plausible causal direction between two variables, based on the behavior of their prediction errors.
 
 ### Why The Basic Approach Makes Sense
 
 This approach to determining causal direction from data leverages several core theoretical insights from statistics and machine learning:
 
 1. **Causal Mechanisms in Predictive Modeling:**
-   - Causality implies a specific directionality where one variable influences another. Regression models capture this directionality by using one variable to predict the other. If 'A' causes 'B', a model with 'A' as the independent variable should predict 'B' effectively, capturing the causal mechanism.
+   - The underlying assumption is that causality implies directionality, where one variable influences another. We use a variety of regression models, each capturing this relationship differently. If 'A' causes 'B', a model treating 'A' as the independent variable should effectively predict 'B', implying a causal influence.
 
-2. **Interpreting Model Errors:**
-   - Errors in a well-specified model, where the causal direction aligns with reality, should be mostly random, representing unexplained noise. This randomness indicates that the model has successfully captured the systematic variations driven by the causal variable.
-   - In contrast, errors in a model with the incorrect causal direction will exhibit non-random patterns, revealing the model's failure to capture the true generating process.
+2. **Multifaceted Error Analysis:**
+   - The analysis goes beyond examining random errors in well-specified models. It involves:
+     - **Statistical Tests on Errors**: We apply Shapiro-Wilk, skewness, kurtosis, and autocorrelation tests to the prediction errors. These tests help assess whether errors are random (indicative of a good model fit and potential causal direction) or have non-random patterns (suggesting incorrect causal assumptions).
+     - **Functional Data Analysis (FDA)**: We transform error structures into functional data, allowing us to analyze their variance and mean differences. This step is crucial in understanding the depth and variability of errors in a more nuanced manner.
 
-3. **Mahalanobis Distance in Error Analysis:**
-   - Mahalanobis distance measures how deviations in error distributions compare to normal randomness, considering the data's covariance. This metric helps determine which model's errors align more closely with random noise, suggesting a correctly specified causal direction.
+3. **Comparative Error Structure and Distribution Analysis:**
+   - We contrast models assuming different causal directions by analyzing their error distributions and applying Functional Data Analysis (FDA).
+   - Distribution fitting to errors, with the Akaike Information Criterion (AIC) for model selection, helps in understanding how the errors conform to theoretical distributions. Lower AIC values suggest a better fit and, by extension, a more plausible causal direction.
 
-4. **Comparative Error Structure Analysis:**
-   - By contrasting two models, each assuming a different causal direction, and evaluating their error distributions, we assess which model aligns more closely with the principle of causality leading to random residual noise.
+4. **Scoring System for Causal Inference:**
+   - We employ a scoring system that aggregates results from statistical tests, FDA, and distribution fitting. This comprehensive scoring reflects the complex nature of causal relationships better than any single metric.
 
-5. **Assumptions and Practical Considerations:**
-   - The method presumes linear or adequately captured relationships by the chosen models. Complex or nonlinear causal relationships might not be accurately depicted.
-   - The presence of confounding variables can mislead the analysis by introducing spurious correlations.
-   - While this method suggests a more likely causal direction, it doesn't conclusively prove causation. It should be viewed as part of a broader exploratory analysis, supplemented by theoretical knowledge and, if feasible, experimental validation.
+5. **Ratio-Based Decision Making:**
+   - The method calculates a ratio of scores for each possible causal direction, using a predefined threshold to suggest the more likely direction. If the ratio does not meet the threshold, the analysis remains inconclusive.
 
 ### Intuitive Understanding of the Approach
 
-The rationale behind this data-driven approach for determining causal direction is grounded in the fundamental nature of causality and predictive modeling:
+This methodology for determining causal direction is deeply grounded in predictive modeling, comprehensive statistical testing, and functional data analysis (FDA). It adopts a multifaceted approach, utilizing various statistical methods to deduce the most probable causal relationship between variables in time series data.
 
-1. **Causality and Predictability:**
-   - A causal relationship implies that changes in one variable systematically result in changes in another. If this holds true, a model should accurately predict the effect variable using the cause variable, leaving only random noise in the residuals.
+1. **Causality and Predictive Modeling:**
+   - The approach is based on the premise that a true causal link between two variables should enable accurate predictions. In such cases, using the causal variable to predict the effect variable results in residuals that predominantly exhibit random noise.
 
-2. **Error Characteristics as Indicators:**
-   - Randomness in a model's residuals suggests successful capture of the systematic component, indicative of the correct causal direction. Structured or patterned residuals hint at a mis-specified model, likely with an incorrect assumption about causality.
+2. **Detailed Error Analysis as Indicators of Causality:**
+   - Beyond seeking randomness in model residuals, this method conducts an extensive error analysis across multiple models. It investigates whether error characteristics, such as distribution and structure, significantly differ when hypothesized causal directions are reversed.
 
-3. **Diagnostic Role of Mahalanobis Distance:**
-   - This statistical measure helps evaluate how error distributions deviate from expected randomness. Lesser deviation implies a better causal model, capturing the true directionality.
+3. **Integration of Statistical Tests and Functional Data Analysis:**
+   - Statistical tests including Shapiro-Wilk for normality, kurtosis, skewness, and autocorrelation are employed to scrutinize the error structure. FDA further deepens this analysis, exploring variance and depth in the error patterns across various models.
 
-4. **Efficacy of Comparative Analysis:**
-   - Comparing error distributions from models with reversed variables offers insights into which direction is more causally plausible, based on the nature of the residuals.
+4. **Distribution Fitting and Akaike Information Criterion (AIC) Scoring:**
+   - Different statistical distributions are fitted to the model errors, and the Akaike Information Criterion (AIC) is used to select the model that best approximates randomness. This step aids in identifying the most accurate causal model based on error distribution.
 
-5. **Data-Centric Insights:**
-   - The approach leverages the intrinsic properties of the data, assuming the data reflects the underlying causal relationship. It uses the error structures to infer the more probable causal direction.
+5. **Scoring System for Causal Direction Inference:**
+   - A scoring system, based on the outcomes of statistical tests, FDA, and AIC scores, is applied. This system compares the scores for each potential causal direction, using a predefined threshold to deduce the more likely causal relationship, or declaring the analysis inconclusive when the evidence is insufficient.
 
-In essence, this methodology exploits the principle that correct causality modeling results in random-like errors, while incorrect modeling leaves structured errors. The comparison of these error structures from two different causal assumptions in the models helps infer the likely direction of causality. It is important to apply this method with a comprehension of its theoretical underpinnings and inherent limitations, ensuring a holistic approach to causal analysis.
+6. **Comprehensive Ratio-Based Analysis for Causality:**
+   - The method employs a ratio of scores for the two potential causal directions. If this ratio surpasses a certain threshold, it suggests a stronger likelihood of that direction being the causal one. This ratio-based approach ensures a balanced assessment of diverse statistical elements.
 
+In essence, this methodology leverages the principle that accurate causal modeling leads to error structures that are close to random, while incorrect causal assumptions result in distinct error patterns. By comparing these structures under different causal hypotheses and integrating a broad spectrum of statistical techniques, the approach offers a nuanced and robust way to infer the likely direction of causality.
 
 ### Unique Aspects of the Script
 
@@ -93,7 +99,7 @@ The script performs the following functions:
    - Calculates a ratio representing the 'noise-like' quality of error distributions for each direction. A higher ratio in one direction suggests a stronger likelihood of that being the correct causal relationship.
 
 4. **Visualization:** 
-   - Generates heatmaps to visually represent the strength of causal relationships and associated p-values for permutation and bootstrap tests.
+   - Generates heatmaps to visually represent the strength of causal relationships.
 
 ## Usage
 
@@ -134,74 +140,103 @@ The script performs the following functions:
   - `KNeighborsRegressor`: Regression based on k-nearest neighbors.
   - `SVR`: Support Vector Regression.
 
-### Function: `fit_models_and_analyze_errors(X, y, models, column_names)`
-- **Purpose:** Fits each model to the data and analyzes the prediction errors.
-- **Theoretical Underpinning:** The core concept is based on regression analysis, where the goal is to predict an outcome (dependent variable) from one or more predictors (independent variables). The quality of these predictions, and the errors they produce, can inform us about the relationships in the data.
-- **Intuitive Explanation:** Imagine trying to predict tomorrow's temperature (y) based on today's altitude (X) using different methods. Some methods might get close to the actual temperature, with small errors, while others might be way off. Analyzing where and how these predictions go wrong (the errors) can tell us a lot about the relationship between altitude and temperature.
-- **Process:**
-  1. **Data Preparation:** Converts input series `X` and `y` to NumPy arrays and reshapes them if they are 1-dimensional.
-  2. **Error Collection:** Initializes a dictionary to hold error information for each model.
-  3. **Model Fitting:**
-     - Iterates through each model, splitting the dataset using `TimeSeriesSplit` for cross-validation.
-     - Fits the model on each train-test split, then predicts and collects errors (difference between actual and predicted values).
-  4. **Error Analysis:**
-     - Aggregates errors across all folds.
-     - Checks for low variance in predictions and aggregated errors as an indicator of potential model underperformance.
-     - Stores errors, mean cross-validated mean squared error (MSE), and R² scores in the `errors` dictionary.
 
-### Function: `calculate_mahalanobis_distance(errors)`
-- **Purpose:** Computes the Mahalanobis distance for the given error array, indicating how far the errors deviate from a normal distribution.
-- **Theoretical Underpinning:** The Mahalanobis distance is a multivariate statistical measure that gauges the distance of a point from a distribution, considering the distribution's covariance. It's a way to measure the 'strangeness' or 'unusualness' of the errors in a multivariate context.
-- **Intuitive Explanation:** If the errors from our predictions are just random noise, they should scatter randomly and typically around zero. Mahalanobis distance checks how 'normal' this scatter is. If the errors are not just random noise but have some pattern, this distance will be larger, signaling something more than mere chance at play.
-- **Process:**
-  1. **Pre-processing Checks:** Ensures the errors array is suitable for calculation (not empty, not singular).
-  2. **Calculation:**
-     - Computes the mean and covariance of the error array.
-     - Calculates the Mahalanobis distance for each error point.
-     - Averages these distances and converts them into cumulative distribution function (CDF) values using the chi-square distribution.
-
-### Function: `calculate_mahalanobis_ratio(data1, data2, models, column_names)`
-- **Purpose:** Calculates the ratio of the average Mahalanobis distances for two sets of errors (each assuming different causal directions).
-- **Theoretical Underpinning:** This function is based on the concept that the Mahalanobis distance is a measure of the divergence of a point from a distribution. In causal analysis, this helps to quantify how 'structured' or 'random' the error distribution is in each model, providing insights into which model more accurately captures the causal relationship.
-- **Intuitive Explanation:** Imagine throwing darts at a target. If your throws (errors) are all over the place (random), it suggests you're aiming correctly but with some natural variability. If your throws consistently miss in one direction, it implies something is systematically off. This function is like comparing the pattern of your throws in two scenarios to see which one is more random, indicating a better aim (or causal direction).
-- **Process:**
-  1. Fits models and analyzes errors for both directions (data1 → data2 and data2 → data1).
-  2. Computes average Mahalanobis distances for each direction.
-  3. Returns the ratio of these average distances.
-
-### Function: `permutation_test_mahalanobis(data1, data2, models, column_names, n_iterations)`
-- **Purpose:** Performs a permutation test to assess the significance of the calculated Mahalanobis ratio.
-- **Theoretical Underpinning:** Permutation tests are a non-parametric statistical method used to test hypotheses. By shuffling the data and recalculating the Mahalanobis ratio, this function assesses whether the observed ratio is significant or just a result of random chance.
-- **Intuitive Explanation:** Think of this like shuffling a deck of cards repeatedly and checking if a specific arrangement (the observed ratio) occurs often or is rare. If it's rare, it suggests that the original arrangement (the observed Mahalanobis ratio) wasn't just a fluke and might have meaningful implications.
-- **Process:**
-  1. Computes the observed Mahalanobis ratio.
-  2. Randomly permutes the data pairs and recalculates the ratio for each permutation.
-  3. Counts how often the permuted ratio exceeds the observed ratio.
-  4. Calculates a p-value based on this count.
-
-### Function: `bootstrap_test(data1, data2, n_iterations, size)`
-- **Purpose:** Conducts a bootstrap test to assess the difference in means between two datasets.
-- **Theoretical Underpinning:** Bootstrap testing is a resampling technique used to estimate statistics on a population by sampling a dataset with replacement. It allows for understanding the variability of the estimated difference in means without making strict assumptions about the distribution of the data.
-- **Intuitive Explanation:** Imagine you have two buckets of apples, each with different average weights. You repeatedly take a handful from each bucket, measure the average weights, and put them back. By doing this many times, you get a sense of how often the difference in average weight you initially observed could happen just by chance. If it's rarely observed in your repeated samples, the initial observation is likely significant.
-- **Process:**
-  1. Calculates the observed difference in means.
-  2. Performs resampling with replacement to create bootstrap samples.
-  3. Calculates the mean difference for each bootstrap sample.
-  4. Counts how often the bootstrap difference exceeds the observed difference.
-  5. Calculates a p-value based on this count.
-
-### Function: `analyze_causal_direction(data, column1, column2, models)`
-- **Purpose:** Analyzes the causal direction between two variables using the previously defined functions.
+### Function: `transform_to_fdata(errors)`
+- **Purpose:** Transforms an array of errors into functional data format suitable for Functional Data Analysis (FDA).
 - **Theoretical Underpinning:** 
-  - This function embodies the concept of causality in statistical modeling, where the direction of the causal relationship is crucial. The models aim to capture the dependency of one variable on another, and the comparison of error structures from both directions provides insight into which model aligns better with the causal reality.
+  - This function is central to FDA, where data is treated as a continuum rather than discrete points. The transformation facilitates advanced analytical techniques like variance and depth analysis.
 - **Intuitive Explanation:** 
-  - Think of this function as a detective examining evidence from two scenarios. Each model represents a different story about who influences whom. By looking at which story leaves less 'unexplained' (random noise in errors), the function makes an educated guess about the actual causal relationship.
+  - Imagine errors not just as isolated points but as part of a continuous curve. This function reshapes error data into a format that lets us analyze it as a continuous function, revealing patterns not visible in discrete analysis.
+- **Process:** 
+  - Converts the error array into a one-dimensional array.
+  - Generates a grid of points and reshapes the data into a matrix.
+  - Creates a functional data object, `FDataGrid`, from this matrix.
+
+### Function: `add_jitter(data, jitter_amount=1e-6)`
+- **Purpose:** Adds a small amount of random noise (jitter) to the data.
+- **Theoretical Underpinning:** 
+  - Jittering is a technique often used in data visualization and analysis to prevent overplotting and to handle cases of zero variance in data.
+- **Intuitive Explanation:** 
+  - If data points overlap exactly or are too uniform, it's hard to see their true distribution. Adding jitter is like slightly shaking a pile of overlapping papers to spread them out and see each one better.
+- **Process:** 
+  - Applies a small, random fluctuation to each data point, controlled by the `jitter_amount` parameter.
+
+### Function: `synchronize_errors(errors_X1, errors_X2)`
+- **Purpose:** Synchronizes two error arrays by ensuring they are of the same length and free of non-numeric values.
+- **Theoretical Underpinning:** 
+  - Error synchronization is crucial for comparative analysis, especially when performing statistical tests or functional data analysis on paired error data.
+- **Intuitive Explanation:** 
+  - It's like aligning two strings of beads so that each bead from one string has a corresponding bead in the other. This alignment is necessary to make meaningful comparisons between the two strings.
+- **Process:** 
+  - Converts error lists into numpy arrays.
+  - Removes any non-numeric values (NaN or infinity) and synchronizes the lengths of both arrays.
+
+### Function: `fda_analysis(errors_X1, errors_X2)`
+- **Purpose:** Performs Functional Data Analysis on two sets of errors to compare their statistical properties.
+- **Theoretical Underpinning:** 
+  - FDA is used here to analyze and compare the variance, mean, and depth of error functions, providing a deeper understanding of error characteristics in a continuous domain.
+- **Intuitive Explanation:** 
+  - Imagine analyzing two different waves in the ocean. Instead of just looking at individual waves (errors), you're examining the overall shape, size, and movement patterns of these waves to understand their nature.
+- **Process:** 
+  - Synchronizes and cleans the error data.
+  - Transforms error arrays into functional data.
+  - Computes and compares various statistical measures like variance, mean, and functional depth between the two sets of errors.
+  - Handles cases with insufficient data or zero variance by returning appropriate values or flags.
+
+### Function: `fit_distributions(errors)`
+- **Purpose:** Fits various statistical distributions to the error data from models and selects the best fit using the Akaike Information Criterion (AIC).
+- **Theoretical Underpinning:** 
+  - This function is based on the principle that understanding the distribution of errors can give insights into the model's performance and the underlying data structure. Different distributions provide different lenses to view and interpret these errors.
+- **Intuitive Explanation:** 
+  - Imagine the errors as a set of data points scattered in a certain way. `fit_distributions` tries on different 'glasses' (distributions) to see which one views these points most clearly and accurately, thereby understanding the error pattern better.
 - **Process:**
-  1. Standardizes the data for the two variables.
-  2. Fits models and analyzes errors in both possible causal directions.
-  3. Calculates the Mahalanobis ratio.
-  4. Determines the likely causal direction based on the ratio.
-  5. Returns the results, including the determined causal direction and error arrays.
+  1. Checks for empty or problematic error data.
+  2. Tries fitting different statistical distributions (normal, gamma, beta, exponential) to the errors.
+  3. For distributions like Beta, normalizes the error data.
+  4. Selects the distribution that best fits the errors based on the lowest AIC value, indicating the most efficient model in terms of information loss.
+
+### Function: `prediction_error_analysis(errors_X1, errors_X2, threshold=3)`
+- **Purpose:** Analyzes prediction errors from various models to determine the most likely causal direction between two variables.
+- **Theoretical Underpinning:** 
+  - Combines concepts from statistical testing, functional data analysis, and model comparison to infer causal relationships. It assumes that the correct causal direction will yield a particular pattern in the prediction errors.
+- **Intuitive Explanation:** 
+  - Think of this function as a judge weighing evidence from two sides (X1 causing X2 and vice versa). It examines the 'quality' of errors from models in both scenarios using various statistical measures and decides which causal direction seems more convincing.
+- **Process:**
+  1. Validates the input as error dictionaries from models.
+  2. Assigns weights to different types of error analysis (statistical tests, FDA, AIC scores).
+  3. Scores each potential causal direction based on how the errors conform to expectations (e.g., randomness, distribution shape).
+  4. Compares these scores using a ratio to determine the more likely causal direction, or concludes inconclusiveness if the evidence is not strong enough.
+  5. Returns the ratio and the inferred causal direction, or a statement of inconclusiveness.
+
+### Function: `fit_models_and_analyze_errors(X, y, models, column_names)`
+- **Purpose:** This function fits a variety of regression models to the data and performs an in-depth analysis of the prediction errors for each model.
+- **Theoretical Underpinning:** The function is grounded in regression analysis principles, aiming to understand the relationship between an independent variable (X) and a dependent variable (y) through various predictive models. It emphasizes the importance of error analysis in understanding model performance and the underlying data relationships.
+- **Intuitive Explanation:** Consider you're attempting to predict a dependent variable (y) based on an independent variable (X) using different models. This function systematically evaluates how each model performs, not just in terms of its predictive accuracy but also by examining the nature and variance of its errors.
+- **Process:**
+  1. **Variation Check:** Ensures sufficient variation exists in both `X` and `y` to allow for meaningful analysis.
+  2. **Error Collection and Analysis Setup:** Prepares for collecting detailed error information for each model, including mean squared error (MSE) and R² scores.
+  3. **Model Fitting and Error Tracking:**
+     - Iterates through each provided model, splitting the dataset using `TimeSeriesSplit` for time series cross-validation.
+     - In each split, the model is fitted to the training data, and predictions are made for the test set.
+     - Prediction errors (difference between actual and predicted values) are collected, along with a flag for low variance in predictions, which may indicate model underperformance.
+  4. **Comprehensive Error Analysis:**
+     - Aggregates errors from all splits and checks for low variance, both in individual predictions and aggregated errors, which could signal issues with the model.
+     - Compiles and stores detailed error information, including aggregated errors, cross-validated MSE, and R² scores, for each model in a dictionary.
+
+
+### Function: `analyze_causal_direction(data, column1, column2, models, threshold=3)`
+- **Purpose:** This function evaluates the causal direction between two variables by analyzing the errors of various predictive models in both potential causal directions.
+- **Theoretical Underpinning:** 
+  - At its core, this function applies the principles of statistical modeling to uncover causal relationships. It scrutinizes how well each model can predict one variable from another and compares the error structures from both directions to discern the more likely causal link.
+- **Intuitive Explanation:** 
+  - Imagine the function as a detective analyzing two narratives: one where `column1` influences `column2`, and another where `column2` influences `column1`. The function assesses each narrative by examining the 'leftover' errors (or clues) from various models and determines which narrative is more plausible based on the error characteristics and a scoring system.
+- **Process:**
+  1. Validates the specified columns and standardizes the data for the two variables.
+  2. Fits multiple machine learning models to the data in both possible causal directions, analyzing the errors generated.
+  3. Utilizes the `prediction_error_analysis` function to compare the errors and compute a score ratio, based on statistical tests, functional data analysis, and distribution fitting.
+  4. Determines the most likely causal direction by comparing the score ratios to a predefined threshold.
+  5. Returns the results, including the identified causal direction, score ratio, and error arrays for further analysis.
+
 
 ### Function: `normalize_data(data)`
 - **Purpose:** Normalizes each column in the dataset.
@@ -223,9 +258,21 @@ The script performs the following functions:
   2. Creates a heatmap using Seaborn with the provided matrix, labels, and title.
 
 #### Main Script: `process_data(file_path)`
-- **Purpose:** Executes the entire causal analysis process for the given file path.
+- **Purpose:** To execute the full causal analysis process for the specified file path.
 - **Process:**
-  1. Loads and preprocesses the data.
-  2. Performs causal analysis on all combinations of variables.
-  3. Stores results in matrices for Mahalanobis ratios and p-values from permutation and bootstrap tests.
-  4. Generates and displays heatmaps to visualize the results.
+  1. **Data Loading and Preprocessing:** 
+     - Loads data from the given file path.
+     - Preprocesses the data, including handling infinite values and ensuring data consistency.
+  2. **Normalization (Conditional):** 
+     - Normalizes the data if the `use_normalize_input_data` flag is set. This step is crucial for ensuring that the data is on a comparable scale across different variables.
+  3. **Causal Analysis on Variable Combinations:**
+     - Iteratively performs causal analysis for every possible pair of variables in the dataset.
+     - Utilizes a range of machine learning models to assess the causal relationship between each pair.
+  4. **Ratio Matrix Construction:**
+     - Constructs a matrix to store the ratio scores derived from the causal analysis, indicating the strength and direction of the inferred causal relationships.
+     - Each entry in the matrix represents the causal direction strength from one variable to another.
+  5. **Progress Updates:**
+     - Provides ongoing updates on the progress of the analysis, indicating how many combinations of variables have been processed out of the total.
+
+- **Output:** 
+  - Returns a matrix of ratio scores representing the causal relationship strengths, along with a list of the column names (variables) analyzed.
